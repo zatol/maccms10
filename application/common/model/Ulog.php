@@ -85,6 +85,17 @@ class Ulog extends Base {
                     'type'=>[],
                 ];
             }
+            elseif($v['ulog_mid']==8){
+                $actor_info = model('Actor')->infoData(['actor_id'=>['eq',$v['ulog_rid']]],'*',1);
+                $actor_info['info']['link'] = mac_url_actor_detail($actor_info['info']);
+                $v['data'] = [
+                    'id'=>$actor_info['info']['actor_id'],
+                    'name'=>$actor_info['info']['actor_name'],
+                    'pic'=>mac_url_img($actor_info['info']['actor_pic']),
+                    'link'=>$actor_info['info']['link'],
+                    'type'=>[],
+                ];
+            }
         }
 
         if(!empty($user_ids)){
@@ -127,7 +138,7 @@ class Ulog extends Base {
             return ['code'=>1001,'msg'=>'参数错误：'.$validate->getError() ];
         }
 
-        if($data['user_id']==0 || !in_array($data['ulog_mid'],['1','2','3']) || !in_array($data['ulog_type'],['1','2','3','4','5']) ) {
+        if($data['user_id']==0 || !in_array($data['ulog_mid'],['1','2','3','8']) || !in_array($data['ulog_type'],['1','2','3','4','5']) ) {
             return ['code'=>1002,'msg'=>'参数非法'];
         }
 

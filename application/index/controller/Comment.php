@@ -31,7 +31,7 @@ class Comment extends Base
 		$param = mac_param_url();
         $this->assign('param',$param);
         $this->assign('comment',$GLOBALS['config']['comment']);
-        return $this->label_fetch('comment/ajax');
+        return $this->label_fetch('comment/ajax',0,'json');
 	}
 
 	public function saveData() {
@@ -68,7 +68,7 @@ class Comment extends Base
         }
         $param['comment_content']= htmlentities(mac_filter_words($param['comment_content']));
 
-        if(!in_array($param['comment_mid'],['1','2','3','8','9'])){
+        if(!in_array($param['comment_mid'],['1','2','3','8','9','11'])){
             return ['code'=>1006,'msg'=>'模型mid错误'];
         }
 

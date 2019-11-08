@@ -209,7 +209,7 @@ class Art extends Base {
                 $type_list = model('Type')->getCache('type_list');
                 $type_info = $type_list[$type];
                 $flag='type';
-                if($pageurl == 'vod/show'){
+                if($pageurl == 'art/show'){
                     $flag='show';
                 }
                 $pageurl = mac_url_type($type_info,$param,$flag);
@@ -515,15 +515,12 @@ class Art extends Base {
         return ['code'=>1,'msg'=>'删除成功'];
     }
 
-    public function fieldData($where,$col,$val)
+    public function fieldData($where,$update)
     {
-        if(!isset($col) || !isset($val)){
+        if(!is_array($update)){
             return ['code'=>1001,'msg'=>'参数错误'];
         }
-
-        $data = [];
-        $data[$col] = $val;
-        $res = $this->allowField(true)->where($where)->update($data);
+        $res = $this->allowField(true)->where($where)->update($update);
         if($res===false){
             return ['code'=>1001,'msg'=>'设置失败：'.$this->getError() ];
         }

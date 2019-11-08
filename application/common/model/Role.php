@@ -34,6 +34,12 @@ class Role extends Base {
         if(!is_array($where)){
             $where = json_decode($where,true);
         }
+        $where2='';
+        if(!empty($where['_string'])){
+            $where2 = $where['_string'];
+            unset($where['_string']);
+        }
+
         $limit_str = ($limit * ($page-1) + $start) .",".$limit;
         if($totalshow==1) {
             $total = $this->where($where)->count();

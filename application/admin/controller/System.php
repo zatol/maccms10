@@ -52,6 +52,13 @@ class System extends Base
         if (Request()->isPost()) {
             $config = input();
 
+            $validate = \think\Loader::validate('System');
+            if(!$validate->check($config)){
+                return $this->error($validate->getError());
+            }
+            unset($config['__token__']);
+
+
             $ads_dir='ads';
             $mob_ads_dir='ads';
             $path = ROOT_PATH .'template/'.$config['site']['template_dir'].'/info.ini';
@@ -518,6 +525,18 @@ class System extends Base
             if (empty($config_new['collect']['actor']['uprule'])) {
                 $config_new['collect']['actor']['uprule'] = [];
             }
+            if (empty($config_new['collect']['role']['inrule'])) {
+                $config_new['collect']['role']['inrule'] = ['a'];
+            }
+            if (empty($config_new['collect']['role']['uprule'])) {
+                $config_new['collect']['role']['uprule'] = [];
+            }
+            if (empty($config_new['collect']['website']['inrule'])) {
+                $config_new['collect']['website']['inrule'] = ['a'];
+            }
+            if (empty($config_new['collect']['website']['uprule'])) {
+                $config_new['collect']['website']['uprule'] = [];
+            }
 
             $config_new['collect']['vod']['inrule'] = ',' . join(',', $config_new['collect']['vod']['inrule']);
             $config_new['collect']['vod']['uprule'] = ',' . join(',', $config_new['collect']['vod']['uprule']);
@@ -525,15 +544,22 @@ class System extends Base
             $config_new['collect']['art']['uprule'] = ',' . join(',', $config_new['collect']['art']['uprule']);
             $config_new['collect']['actor']['inrule'] = ',' . join(',', $config_new['collect']['actor']['inrule']);
             $config_new['collect']['actor']['uprule'] = ',' . join(',', $config_new['collect']['actor']['uprule']);
+            $config_new['collect']['role']['inrule'] = ',' . join(',', $config_new['collect']['role']['inrule']);
+            $config_new['collect']['role']['uprule'] = ',' . join(',', $config_new['collect']['role']['uprule']);
+            $config_new['collect']['website']['inrule'] = ',' . join(',', $config_new['collect']['website']['inrule']);
+            $config_new['collect']['website']['uprule'] = ',' . join(',', $config_new['collect']['website']['uprule']);
 
             $config_new['collect']['vod']['namewords'] = mac_replace_text($config_new['collect']['vod']['namewords'], 2);
-
             $config_new['collect']['vod']['thesaurus'] = mac_replace_text($config_new['collect']['vod']['thesaurus'], 2);
             $config_new['collect']['vod']['words'] = mac_replace_text($config_new['collect']['vod']['words'], 2);
             $config_new['collect']['art']['thesaurus'] = mac_replace_text($config_new['collect']['art']['thesaurus'], 2);
             $config_new['collect']['art']['words'] = mac_replace_text($config_new['collect']['art']['words'], 2);
             $config_new['collect']['actor']['thesaurus'] = mac_replace_text($config_new['collect']['actor']['thesaurus'], 2);
             $config_new['collect']['actor']['words'] = mac_replace_text($config_new['collect']['actor']['words'], 2);
+            $config_new['collect']['role']['thesaurus'] = mac_replace_text($config_new['collect']['role']['thesaurus'], 2);
+            $config_new['collect']['role']['words'] = mac_replace_text($config_new['collect']['role']['words'], 2);
+            $config_new['collect']['website']['thesaurus'] = mac_replace_text($config_new['collect']['website']['thesaurus'], 2);
+            $config_new['collect']['website']['words'] = mac_replace_text($config_new['collect']['website']['words'], 2);
 
             $config_old = config('maccms');
             $config_new = array_merge($config_old, $config_new);
@@ -594,7 +620,26 @@ class System extends Base
         return $this->fetch('admin@system/configplay');
     }
 
+    public function configseo()
+    {
+        if (Request()->isPost()) {
+            $config = input();
+            $config_new['seo'] = $config['seo'];
 
+            $config_old = config('maccms');
+            $config_new = array_merge($config_old, $config_new);
+
+            $res = mac_arr2file(APP_PATH . 'extra/maccms.php', $config_new);
+            if ($res === false) {
+                return $this->error('保存失败，请重试!');
+            }
+            return $this->success('保存成功!');
+        }
+
+        $this->assign('config', config('maccms'));
+        $this->assign('title', 'SEO参数配置');
+        return $this->fetch('admin@system/configseo');
+    }
 
 
 }
